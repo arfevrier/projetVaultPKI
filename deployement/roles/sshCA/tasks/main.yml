@@ -1,8 +1,8 @@
-- name: Installation de ssh
+- name: SSH Installation
   become: yes
   apt: name=openssh-server state=latest
 
-- name: Download the ssh CA
+- name: Download the SSH CA
   get_url:
     validate_certs: no
     url: "{{ vault.url }}{{ vault.ssh }}/public_key"
@@ -11,7 +11,7 @@
   notify:
     - Restart SSH server
 
-- name: Add CA to sshd config
+- name: Add the CA to sshd config file
   lineinfile:
     path: /etc/ssh/sshd_config
     regexp: "^TrustedUserCAKeys"
