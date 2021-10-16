@@ -1,0 +1,2 @@
+consul_user: 'consul'
+consul_group: 'consul'

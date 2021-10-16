@@ -1,0 +1,18 @@
+---
+- name: Download binary
+  get_url:
+    url: https://releases.hashicorp.com/consul/{{consul_version}}/consul_{{consul_version}}_linux_amd64.zip
+    dest: /tmp/consul_{{consul_version}}_linux_amd64.zip
+    owner: "{{ consul_user }}"
+    group: "{{ consul_group }}"
+    mode: 0755
+  register: consul_download
+
+- name: "Unzip consul archive"
+  unarchive:
+    src: "{{ consul_download.dest }}"
+    dest: /usr/local/bin
+    copy: no
+    owner: "{{ consul_user }}"
+    group: "{{ consul_group }}"
+    mode: 0755

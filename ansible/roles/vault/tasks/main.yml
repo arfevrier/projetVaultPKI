@@ -1,0 +1,18 @@
+---
+# tasks file for vault
+- name: Vault user variables
+  include_vars: ../vars/user.yml
+- name: Vault main variables
+  include_vars: ../vars/main.yml
+
+- name: Create user for vault
+  include_tasks: user.yml
+- name: Install vault
+  include_tasks: install.yml
+- name: Send files and launch vault service
+  include_tasks: config.yml
+- name: Send file to configure consul service
+  include_role:
+    name: common
+    tasks_from: config.yml
+

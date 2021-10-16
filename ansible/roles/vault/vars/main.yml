@@ -1,0 +1,6 @@
+---
+# vars file for vault
+vault_version: '1.8.4'
+vault_config_path: '/etc/vault/'
+consul_data_dir: "/var/consul/data"
+consul_config_path: '/etc/consul'

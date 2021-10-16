@@ -1,0 +1,10 @@
+---
+# tasks file for vault
+- name: Consul user variables
+  include_vars: ../vars/user.yml
+- name: Consul main variables
+  include_vars: ../vars/main.yml
+
+- name: Send files and launch consul service
+  include_tasks: config.yml
+

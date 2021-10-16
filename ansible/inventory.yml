@@ -1,0 +1,9 @@
+---
+all:
+  children:
+    vault:
+      hosts:
+        vault-[a:b].toudherebarry.com
+    consul:
+      hosts:
+        consul-[a:b].toudherebarry.com

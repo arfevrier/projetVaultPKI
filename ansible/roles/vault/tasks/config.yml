@@ -1,0 +1,22 @@
+---
+# tasks file for vault configuration sender
+- name: Copy systemd init file
+  become: yes
+  template:
+    src: daemon.service.j2
+    dest: /etc/systemd/system/vault.service
+    owner: root
+    group: root
+  notify: systemd_reload
+- name: config file
+  become: yes
+  template:
+    src: vault.hcl.j2
+    dest: "{{ vault_config_path }}"
+    owner: "{{ vault_user }}"
+    group: "{{ vault_group }}"
+- name: vault service
+  service:
+    name: vault
+    state: started
+    enabled: yes

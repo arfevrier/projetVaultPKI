@@ -1,0 +1,13 @@
+---
+- hosts: all
+  user: root
+  roles:
+    - common
+- hosts: vault
+  user: vaulty
+  roles:
+    - vault
+- hosts: consul
+  user: vaulty
+  roles:
+    - consul

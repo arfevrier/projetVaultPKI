@@ -1,0 +1,12 @@
+---
+- name: Create a login user
+  user:
+    name: '{{user_name}}'
+    password: "{{user_pass | password_hash('sha512')}}"
+    groups: # Empty by default, here we give it some groups
+    - sudo
+    state: present
+    shell: /bin/bash       # Defaults to /bin/bash
+    system: no             # Defaults to no
+    createhome: yes        # Defaults to yes
+    home: "/home/{{user_name}}"  # Defaults to /home/<username>

@@ -1,0 +1,11 @@
+{  
+  "server": false,
+  "node_name": {{inventory_name}},
+  "data_dir": "{{consul_data_dir}}",
+  "bind_addr": {{ansible_default_ipv4.address}},
+  "client_addr": "127.0.0.1",
+  "retry_join": [{{join_1}}, {{join_2}}],
+  "log_level": "DEBUG",
+  "enable_syslog": true,
+  "acl_enforce_version_8": false
+}
