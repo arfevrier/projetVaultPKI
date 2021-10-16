@@ -32,3 +32,17 @@ resource "vault_ssh_secret_backend_role" "ssh-4as-admin" {
         permit-port-forwarding = ""
     }
 }
+
+resource "vault_auth_backend" "userpass-4as" {
+  type = "userpass"
+  path = "userpass"
+}
+
+resource "vault_policy" "ssh-4as-full-access" {
+  name = "ssh-4as-full-access"
+  policy = <<EOT
+path "ssh-4as/sign/admin" {
+  capabilities = ["update"]
+}
+EOT
+}
