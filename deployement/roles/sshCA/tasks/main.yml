@@ -1,0 +1,24 @@
+- name: Installation de ssh
+  become: yes
+  apt: name=openssh-server state=latest
+
+- name: Download the ssh CA
+  get_url:
+    validate_certs: no
+    url: "{{ vault.url }}{{ vault.ssh }}/public_key"
+    dest: /etc/ssh/sshCA.crt
+    mode: '0440'
+  notify:
+    - Restart SSH server
+
+- name: Add CA to sshd config
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: "^TrustedUserCAKeys"
+    line: "TrustedUserCAKeys /etc/ssh/sshCA.crt"
+  notify:
+    - Restart SSH server
+
+- name: Start SSH server
+  become: yes
+  service: name=ssh state=started enabled=true
