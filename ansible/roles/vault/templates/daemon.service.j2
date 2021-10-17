@@ -17,7 +17,7 @@ After=network-online.target
 User={{vault_user}}
 Group={{vault_group}}
 PIDFile=/var/run/vault/vault.pid
-ExecStart=/usr/local/bin/vault server -config=/etc/vault/vault.hcl -log-level=debug
+ExecStart=/usr/local/bin/vault server -config={{vault_config_path}}vault.hcl -log-level=debug
 ExecReload=/bin/kill -HUP $MAINPID
 KillMode=process
 KillSignal=SIGTERM

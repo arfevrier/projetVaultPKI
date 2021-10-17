@@ -1,12 +1,23 @@
 ---
-- name: Create a login user
+- name: Create a {{user_name}} user
   user:
     name: '{{user_name}}'
     password: "{{user_pass | password_hash('sha512')}}"
     groups: # Empty by default, here we give it some groups
     - sudo
+    append: yes
     state: present
     shell: /bin/bash       # Defaults to /bin/bash
     system: no             # Defaults to no
     createhome: yes        # Defaults to yes
     home: "/home/{{user_name}}"  # Defaults to /home/<username>
+
+- name: Creates ssh dir for {{user_name}}
+  file:
+    path: /home/{{user_name}}/.ssh
+    state: directory
+
+- name: write templated text content into a file on the remote host
+  shell:
+    cmd: cat /root/.ssh/authorized_keys | grep vagrant > /home/{{user_name}}/.ssh/authorized_keys
+  become: yes 

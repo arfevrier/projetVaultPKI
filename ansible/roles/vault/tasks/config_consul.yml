@@ -3,7 +3,7 @@
 - name: Copy systemd init file
   become: yes
   template:
-    src: daemon.service.j2
+    src: consul_daemon.service.j2
     dest: /etc/systemd/system/consul.service
     owner: root
     group: root
@@ -22,4 +22,4 @@
     dest: "{{ consul_config_path }}consul.json"
     owner: "{{ consul_user }}"
     group: "{{ consul_group }}"
-  notify: restart_consul
+    notify: restart_consul

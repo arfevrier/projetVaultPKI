@@ -1,11 +1,30 @@
 listener "tcp" {  
   address          = "0.0.0.0:8200"  
-  cluster_address  = "{{ansible_default_ipv4.address}}:8201"  
+  {% if inventory_hostname not in groups["trusted-vault"] %}
+  cluster_address  = "{{ansible_default_ipv4.address}}:8201" 
+  {% endif %}
   tls_disable      = "true"
+  # tls_cert_file = "{{vault_config_path}}trusted.crt"  
+  # tls_key_file  = "{{vault_config_path}}trusted.key"
 }
+{% if inventory_hostname not in groups["trusted-vault"] %}
 storage "consul" {  
   address = "127.0.0.1:8500"  
   path    = "vault/"
 }
+seal "transit" {
+  address = "http://vault.trusted.toudherebarry.com:8200"
+  disable_renewal = "false"
+  token = "{{vault_token}}"
+  key_name = "autounseal"
+  mount_path = "transit/"
+  tls_skip_verify = "true"
+}
+{% else %}
+storage "file" {
+ path    = "{{vault_data_dir}}"
+}
+{% endif %}
 api_addr = "http://{{ansible_default_ipv4.address}}:8200"
 cluster_addr = "https://{{ansible_default_ipv4.address}}:8201"
+ui = true

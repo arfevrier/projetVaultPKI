@@ -7,16 +7,37 @@
     dest: /etc/systemd/system/vault.service
     owner: root
     group: root
-  notify: systemd_reload
+- name: Create config directory
+  file: 
+    path: "{{ vault_config_path }}"
+    state: directory
+    owner: "{{ vault_user }}"
+    group: "{{ vault_group }}"
+- name: Create vault data directory
+  file:
+    path: "{{ vault_data_dir }}"
+    state: directory
+    owner: "{{ vault_user }}"
+    group: "{{ vault_group }}"
 - name: config file
   become: yes
   template:
     src: vault.hcl.j2
-    dest: "{{ vault_config_path }}"
+    dest: "{{ vault_config_path }}vault.hcl"
     owner: "{{ vault_user }}"
     group: "{{ vault_group }}"
-- name: vault service
-  service:
-    name: vault
-    state: started
-    enabled: yes
+  notify: restart_vault
+#- name: Sending vault tls certificate for trusted server
+#  copy:
+#    src: ../files/trusted.crt
+#    dest: "{{ vault_config_path }}trusted.crt"
+#    owner: "{{ vault_user }}"
+#    group: "{{ vault_group }}"
+#  when: inventory_hostname in groups['trusted-vault']
+#- name: Sending vault tls key for trusted server
+#  copy:
+#    src: ../files/trusted.key
+#    dest: "{{ vault_config_path }}trusted.key" 
+#    owner: "{{ vault_user }}"
+#    group: "{{ vault_group }}"
+#  when: inventory_hostname in groups['trusted-vault']

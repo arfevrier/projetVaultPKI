@@ -4,6 +4,8 @@
   include_vars: ../vars/user.yml
 - name: Vault main variables
   include_vars: ../vars/main.yml
+- name: Vault token variable
+  include_vars: ../vars/token.yml
 
 - name: Create user for vault
   include_tasks: user.yml
@@ -12,7 +14,6 @@
 - name: Send files and launch vault service
   include_tasks: config.yml
 - name: Send file to configure consul service
-  include_role:
-    name: common
-    tasks_from: config.yml
+  include_tasks: config_consul.yml
+  when: inventory_hostname not in groups['trusted-vault']
 

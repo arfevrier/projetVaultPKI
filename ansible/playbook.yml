@@ -1,13 +1,21 @@
 ---
 - hosts: all
   user: root
+  tasks:
+    - name: Update bashrc
+      copy:
+        src: ./rcfile
+        dest: /home/vaulty/.bashrc
+        owner: vaulty
+        group: vaulty
+        mode: 0644
   roles:
     - common
-- hosts: vault
-  user: vaulty
-  roles:
-    - vault
 - hosts: consul
-  user: vaulty
+  user: root
   roles:
     - consul
+- hosts: vault,trusted-vault
+  user: root
+  roles:
+    - vault
