@@ -52,5 +52,5 @@ Liste des ressources utilisées pour mener à bien le projet:
 * [Signed SSH Certificates / vaultproject.io](https://www.vaultproject.io/docs/secrets/ssh/signed-ssh-certificates)
 * [HashiCorp Vault setup SSH Authentication with Ansible and Terraform / infralovers.com](https://www.infralovers.com/en/articles/2021/03/03/hashicorp-vault-and-ssh-with-ansibleterraform/)
 * [Using Vault as an SSH certificate authority / brian-candler.medium.com](https://brian-candler.medium.com/using-hashicorp-vault-as-an-ssh-certificate-authority-14d713673c9a)
-* [Ansible Documentation](https://docs.ansible.com/)
+* [Ansible Documentation / docs.ansible.com](https://docs.ansible.com/)
 * [Documentation Vault Provider / terraform.io](https://registry.terraform.io/providers/hashicorp/vault/latest/docs)
