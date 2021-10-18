@@ -4,10 +4,6 @@ all:
     vault:
       hosts:
         vault-[a:b].toudherebarry.com:
-        vault.trusted.toudherebarry.com:
-    consul:
-      hosts:
-        consul-[a:b].toudherebarry.com:
     trusted-vault:
       hosts:
         vault.trusted.toudherebarry.com:

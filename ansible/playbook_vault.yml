@@ -1,0 +1,5 @@
+---
+- hosts: vault
+  user: root
+  roles:
+    - vault

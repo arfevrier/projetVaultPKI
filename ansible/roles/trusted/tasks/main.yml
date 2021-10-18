@@ -5,7 +5,7 @@
 - name: Vault main variables
   include_vars: ../vars/main.yml
 - name: Vault confidential params variable
-  include_vars: ../vars/tokens.yml
+  include_vars: ../vars/user.yml
 
 - name: Install prerequisites
   package:
@@ -15,6 +15,7 @@
     - curl
     - unzip
   become: yes
+  
 - name: Creating the default user for the server
   include_tasks: server-user.yml
 - name: Create user for vault

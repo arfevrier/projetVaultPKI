@@ -1,5 +1,0 @@
----
-# tasks file for debug message
-- name: Debugging the common role
-  debug:
-    msg: "Test for {{inventory_hostname}} host_variable: {{host_variable}} group_variable: {{group_variable}} username: {{user_name}} password: {{user_pass}}"

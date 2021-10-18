@@ -1,0 +1,5 @@
+---
+- hosts: trusted-vault
+  user: root
+  roles:
+    - trusted

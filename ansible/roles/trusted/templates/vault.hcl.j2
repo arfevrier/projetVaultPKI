@@ -1,0 +1,13 @@
+listener "tcp" {  
+  address          = "0.0.0.0:8200"  
+  tls_disable      = "true"
+  # tls_cert_file = "{{vault_config_path}}trusted.crt"  
+  # tls_key_file  = "{{vault_config_path}}trusted.key"
+}
+
+storage "file" {
+ path    = "{{vault_data_dir}}data"
+}
+api_addr = "http://{{ansible_default_ipv4.address}}:8200"
+cluster_addr = "https://{{ansible_default_ipv4.address}}:8201"
+ui = true
