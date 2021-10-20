@@ -1,7 +1,7 @@
 
 ## Setting up
 
-> ansible-playbook -i inventory.yml trusted.yml
+> ansible-playbook -i inventory.yml 1-trusted-vault.yml
 
 ##### On vault.trusted.toudherebarry.com
   - `VAULT_ADDR="http://127.0.0.1:8200" vault operator init > initial`
@@ -29,7 +29,7 @@
 In the transit configuration set token="token"
 
 
-> ansible-playbook -i inventory.yml trusted.yml
+> ansible-playbook -i inventory.yml 2-cluster-vault.yml
 
 
 #### On vault server active

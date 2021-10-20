@@ -15,8 +15,8 @@
     - curl
     - unzip
   become: yes
-- name: Creating the default user for the server
-  include_tasks: server-user.yml
+#- name: Creating the default user for the server
+#  include_tasks: server-user.yml
 - name: Create user for vault
   include_tasks: user.yml
 - name: Install vault

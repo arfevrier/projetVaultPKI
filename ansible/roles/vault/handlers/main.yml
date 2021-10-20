@@ -6,9 +6,3 @@
     state: restarted
     # enabled: yes
     daemon_reload: yes
-- name: restart_consul
-  service:
-    name: consul
-    state: restarted
-    # enabled: yes
-    daemon_reload: yes
