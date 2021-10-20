@@ -4,6 +4,38 @@ provider "vault" {
     # Token: export VAULT_TOKEN="xxxx"
 }
 
+resource "vault_audit" "file" {
+  type = "file"
+
+  options = {
+    file_path = "/var/lib/vault/vault_audit.log"
+  }
+}
+
+resource "vault_mount" "transit" {
+  path                      = "transit"
+  type                      = "transit"
+  default_lease_ttl_seconds = 3600
+  max_lease_ttl_seconds     = 86400
+}
+
+resource "vault_transit_secret_backend_key" "key" {
+  backend = vault_mount.transit.path
+  name    = "autounseal"
+}
+
+resource "vault_policy" "autounseal-policy" {
+  name = "ssh-4as-full-access"
+  policy = <<EOT
+path "transit/encrypt/autounseal" {
+    capabilities = [ "update" ]
+}
+path "transit/decrypt/autounseal" {
+    capabilities = [ "update" ]
+}
+EOT
+}
+
 resource "vault_mount" "ssh-4as" {
     type = "ssh"
     path = "ssh-4as"
