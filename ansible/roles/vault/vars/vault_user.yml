@@ -1,2 +1,2 @@
-vault_user: 'vault'
-vault_group: 'vault'
+vault_user: 'vaultd'
+vault_group: 'vaultd'

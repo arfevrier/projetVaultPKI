@@ -1,7 +1,4 @@
 ---
-- name: Vault user variables
-  include_vars: ../vars/user.yml
-
 - name: Creating vault user group
   group: 
     name: "{{ vault_group }}"

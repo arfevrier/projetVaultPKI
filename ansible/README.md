@@ -4,8 +4,9 @@
 > ansible-playbook -i inventory.yml 1-trusted-vault.yml
 
 ##### On vault.trusted.toudherebarry.com
-  - `VAULT_ADDR="http://127.0.0.1:8200" vault operator init > initial`
-  - Do the unseal phase with `VAULT_ADDR="http://127.0.0.1:8200" vault operator unseal "unseal-key"` three times
+  - `export VAULT_SKIP_VERIFY=1`
+  - `vault operator init > initial`
+  - Do the unseal phase with `vault operator unseal "unseal-key"` three times
   - Do the login phase: vault login "root-token"
   - `VAULT_ADDR="http://127.0.0.1:8200" vault audit enable file file_path=/var/lib/vault/vault_audit.log` ==> enabling audit logs
   - `VAULT_ADDR="http://127.0.0.1:8200" vault secrets enable transit`

@@ -1,5 +1,5 @@
 ---
-- hosts: trusted-vault
+- hosts: trusted
   become: yes
   become_method: sudo
   become_user: root

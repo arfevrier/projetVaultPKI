@@ -3,11 +3,11 @@ all:
   children:
     vault:
       hosts:
-        vault-[a:b].toudherebarry.com:
+        192.168.100.[3:4]:
           ansible_user: vault
-    trusted-vault:
+    trusted:
       hosts:
-        vault.trusted.toudherebarry.com:
+        192.168.100.6:
           ansible_user: vault
     host:
       hosts:
