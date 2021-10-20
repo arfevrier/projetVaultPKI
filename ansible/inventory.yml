@@ -4,6 +4,12 @@ all:
     vault:
       hosts:
         vault-[a:b].toudherebarry.com:
+          ansible_user: vault
     trusted-vault:
       hosts:
         vault.trusted.toudherebarry.com:
+          ansible_user: vault
+    host:
+      hosts:
+        192.168.100.2:
+          ansible_user: opsi

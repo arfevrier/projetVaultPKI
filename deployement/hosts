@@ -1,6 +1,0 @@
-[vault]
-#192.168.100.3 ansible_connection=ssh ansible_user=vault
-#192.168.100.4 ansible_connection=ssh ansible_user=vault
-
-[host]
-192.168.100.2 ansible_connection=ssh ansible_user=opsi

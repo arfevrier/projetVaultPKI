@@ -1,0 +1,8 @@
+# This playbook deploys SSH CA on all 4AS server
+- name: add SSH CA to all 4AS servers
+  hosts: host
+  become: yes
+  become_method: sudo
+  become_user: root
+  roles:
+    - sshCA
