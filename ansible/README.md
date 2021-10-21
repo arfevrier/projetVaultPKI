@@ -1,22 +1,18 @@
-
 ## Setting up
 
 > ansible-playbook -i inventory.yml 1-trusted-vault.yml
 
-##### On vault.trusted.toudherebarry.com
+##### On Trusted Vault (192.168.100.6)
   - `export VAULT_SKIP_VERIFY=1`
   - `vault operator init > initial`
   - Do the unseal phase with `vault operator unseal "unseal-key"` three times
-  - `VAULT_ADDR="http://127.0.0.1:8200" vault token create -policy="autounseal"`
-> Use the token from here to configure the vault cluster server you want to use as active
+  - `vault token create -policy="autounseal-policy"`
 
-In the transit configuration set token="token"
-
+Put the token in a file .secret.yml with "token" key.
 
 > ansible-playbook -i inventory.yml 2-cluster-vault.yml
 
-
-#### On vault server active
+#### On Cluster Vault (192.168.100.3-4)
 `VAULT_ADDR="http://127.0.0.1:8200" vault operator init > initial`
 > initial will hold recovery keys
 

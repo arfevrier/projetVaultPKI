@@ -5,7 +5,7 @@
 - name: Vault main variables
   include_vars: ../vars/main.yml
 - name: Vault confidential params variable
-  include_vars: ../vars/tokens.yml
+  include_vars: ../../../.secret.yml
 
 - name: Install prerequisites
   package:
@@ -14,6 +14,7 @@
   with_items:
     - curl
     - unzip
+    - python3-pip
   become: yes
 #- name: Creating the default user for the server
 #  include_tasks: server-user.yml

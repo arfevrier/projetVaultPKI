@@ -1,7 +1,9 @@
 listener "tcp" {  
   address          = "0.0.0.0:8200"  
-  cluster_address  = "{{ansible_default_ipv4.address}}:8201" 
-  tls_disable      = "true"
+  cluster_address  = "0.0.0.0:8201" 
+  tls_disable = "true"
+  #tls_cert_file = "{{vault_config_path}}tls.crt"  
+  #tls_key_file  = "{{vault_config_path}}tls.key"
 }
 
 storage "raft" {
@@ -15,7 +17,7 @@ storage "raft" {
 }
 
 seal "transit" {
-  address = "http://vault.trusted.toudherebarry.com:8200"
+  address = "https://192.168.100.6:8200"
   disable_renewal = "false"
   token = "{{token}}"
   key_name = "autounseal"
@@ -23,6 +25,6 @@ seal "transit" {
   tls_skip_verify = "true"
 }
 
-api_addr = "http://{{ansible_default_ipv4.address}}:8200"
-cluster_addr = "https://{{ansible_default_ipv4.address}}:8201"
+api_addr = "http://{{inventory_hostname}}:8200"
+cluster_addr = "http://{{inventory_hostname}}:8201"
 ui = true
