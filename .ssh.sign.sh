@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #-- Vault configuration
-VAULT_URL="https://192.168.100.3:8200/v1"
+VAULT_URL="http://192.168.100.3:8200/v1"
 
 #-- Start Script
 echo "-> SSH Signer <-"

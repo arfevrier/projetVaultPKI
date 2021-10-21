@@ -1,6 +1,6 @@
 provider "vault" {
-    address = "https://192.168.100.3:8200/"
-    skip_tls_verify = true
+    address = "http://192.168.100.3:8200/"
+    #skip_tls_verify = true
     # Token: export VAULT_TOKEN="xxxx"
 }
 
