@@ -46,8 +46,10 @@ Finalisation de l'installation, avec la récupération d'un token d'authorisatio
 
 Configuration du Trusted Vault:
 
-> cd terraform/trusted-vault
-> terraform init && terraform apply
+```bash
+cd terraform/trusted-vault
+terraform init && terraform apply
+```
 
   - `vault token create -policy="autounseal-policy"`
 
@@ -58,12 +60,13 @@ Put the token in a file `ansible/.secret.yml` with *token* key.
 > ansible-playbook -i inventory.yml 2-cluster-vault.yml
 
 `VAULT_ADDR="http://127.0.0.1:8200" vault operator init > initial`
-> initial will hold recovery keys
 
 Configuration du cluster Vault:
 
-> cd terraform/cluster-vault
-> terraform init && terraform apply
+```bash
+cd terraform/cluster-vault
+terraform init && terraform apply
+```
 
 #### 4. Déploiement du CA PKI SSH
 
