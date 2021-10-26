@@ -29,22 +29,45 @@ Chaque serveur SSH possède le certificat Vault CA. Ainsi chaque serveur reconna
 
 ### ➔ Installation ⚙️
 
-1. Télécharger le code
-   ```bash
-   git clone https://github.com/arnicel/projetVaultPKI.git
-   ```
-2. Mettre à jour les paramètres Ansible:
-   (`deployement/group_vars`) et (`deployement/hosts`)
-3. Déployer le serveur vault
-   ```bash
-   ansible-playbook -i deployement/hosts deployement/site.yml --ask-pass -K
-   ```
-4. Configuration de vault
-   ```bash
-   cd configuration
-   terraform apply
-   ```
+#### 1. Configuation
 
+Les commandes Ansible nécéssitent la configuration des fichiers (`group_vars/host`) et (`inventory.yml`).
+
+Les commandes Terraform nécéssitent d'avoir correctement configuré la variable d'environnement `VAULT_TOKEN`.
+
+#### 2. Installation du Trusted Vault
+
+> ansible-playbook -i inventory.yml 1-trusted-vault.yml
+
+Finalisation de l'installation, avec la récupération d'un token d'authorisation pour le 
+
+  - `export VAULT_SKIP_VERIFY=1`
+  - `vault operator init > initial` puis déverrouiller le Trusted Vault. (`vault operator unseal "unseal-key"`)
+
+Configuration du Trusted Vault:
+
+> cd terraform/trusted-vault
+> terraform init && terraform apply
+
+  - `vault token create -policy="autounseal-policy"`
+
+Put the token in a file `ansible/.secret.yml` with *token* key.
+
+#### 3. Installation du cluster Vault
+
+> ansible-playbook -i inventory.yml 2-cluster-vault.yml
+
+`VAULT_ADDR="http://127.0.0.1:8200" vault operator init > initial`
+> initial will hold recovery keys
+
+Configuration du cluster Vault:
+
+> cd terraform/cluster-vault
+> terraform init && terraform apply
+
+#### 4. Déploiement du CA PKI SSH
+
+> ansible-playbook -i inventory.yml 3-deply-CA.yml
 
 # Ressource 📚
 
