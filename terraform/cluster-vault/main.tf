@@ -60,7 +60,7 @@ resource "vault_pki_secret_backend_role" "role" {
   backend          = vault_pki_secret_backend.ca-4as-cert.path
   name             = "all_insa_4as"
   ttl              = 1314000
-  allowed_domains  = ["insa.4as"]
+  allowed_domains  = ["4as"]
   allow_subdomains = true
 }
 
