@@ -46,3 +46,32 @@ path "ssh-4as/sign/admin" {
 }
 EOT
 }
+
+resource "vault_pki_secret_backend" "ca-4as-cert" {
+  path        = "ca-4as-cert"
+}
+
+resource "vault_pki_secret_backend_config_ca" "ca-4as-cert-ca" {
+  backend = vault_pki_secret_backend.ca-4as-cert.path
+  pem_bundle = file("../../ssl/vault.bundle.pem.key")
+}
+
+resource "vault_pki_secret_backend_role" "role" {
+  backend          = vault_pki_secret_backend.ca-4as-cert.path
+  name             = "all_insa_4as"
+  ttl              = 1314000
+  allowed_domains  = ["insa.4as"]
+  allow_subdomains = true
+}
+
+resource "vault_policy" "domain-4as-sign" {
+  name = "domain-4as-sign"
+  policy = <<EOT
+path "ca-4as-cert/issue/all_insa_4as" {
+  capabilities = ["update"]
+}
+path "ca-4as-cert/roles" {
+  capabilities = ["list"]
+}
+EOT
+}
