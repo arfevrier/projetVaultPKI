@@ -2,3 +2,6 @@
   service:
     name: ssh
     state: restarted
+
+- name: Update trusted CA
+  shell: /usr/sbin/update-ca-certificates

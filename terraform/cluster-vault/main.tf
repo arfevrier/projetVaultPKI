@@ -1,7 +1,20 @@
 provider "vault" {
-    address = "http://192.168.100.3:8200/"
-    #skip_tls_verify = true
+    address = "https://vault.4as:8200/"
+    skip_tls_verify = true
     # Token: export VAULT_TOKEN="xxxx"
+}
+
+resource "vault_ldap_auth_backend" "ldap" {
+    path        = "ldap"
+    url         = "ldap://192.168.100.22"
+    userdn      = "CN=Users,DC=INSA,DC=4AS"
+    userattr    = "sAMAccountName"
+    binddn      = "CN=Arnaud Fevrier,CN=Users,DC=INSA,DC=4AS"
+    bindpass    = file("../../ssl/password.key")
+    groupdn     = "CN=Users,DC=INSA,DC=4AS"
+    groupfilter = "(&(objectClass=person)(sAMAccountName={{.Username}}))"
+    groupattr   = "memberOf"
+    upndomain   = "INSA.4AS"    
 }
 
 resource "vault_mount" "ssh-4as" {
@@ -33,11 +46,6 @@ resource "vault_ssh_secret_backend_role" "ssh-4as-admin" {
     }
 }
 
-resource "vault_auth_backend" "userpass-4as" {
-  type = "userpass"
-  path = "userpass"
-}
-
 resource "vault_policy" "ssh-4as-full-access" {
   name = "ssh-4as-full-access"
   policy = <<EOT
@@ -58,7 +66,7 @@ resource "vault_pki_secret_backend_config_ca" "ca-4as-cert-ca" {
 
 resource "vault_pki_secret_backend_role" "role" {
   backend          = vault_pki_secret_backend.ca-4as-cert.path
-  name             = "all_insa_4as"
+  name             = "domain_4as"
   ttl              = 1314000
   allowed_domains  = ["4as"]
   allow_subdomains = true
@@ -67,11 +75,17 @@ resource "vault_pki_secret_backend_role" "role" {
 resource "vault_policy" "domain-4as-sign" {
   name = "domain-4as-sign"
   policy = <<EOT
-path "ca-4as-cert/issue/all_insa_4as" {
+path "ca-4as-cert/issue/domain_4as" {
   capabilities = ["update"]
 }
 path "ca-4as-cert/roles" {
   capabilities = ["list"]
 }
 EOT
+}
+
+resource "vault_ldap_auth_backend_group" "group" {
+    groupname = "Etudiant"
+    policies  = ["domain-4as-sign", "ssh-4as-full-access"]
+    backend   = vault_ldap_auth_backend.ldap.path
 }

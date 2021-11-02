@@ -22,3 +22,19 @@
 - name: Start SSH server
   become: yes
   service: name=ssh state=started enabled=true
+
+- name: Install CA package
+  apt:
+    name: ca-certificates
+    state: present
+    update_cache: yes
+
+- name: Copy certificate authority to trusted CA path
+  copy:
+    src: ../ssl/ca4AS.crt
+    dest: '/usr/local/share/ca-certificates/'
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+    - Update trusted CA

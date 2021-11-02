@@ -1,7 +1,8 @@
 #!/bin/bash
 
 #-- Vault configuration
-VAULT_URL="http://192.168.100.3:8200/v1"
+VAULT_URL="https://vault.4as:8200/v1"
+AUTH_TYPE="ldap"
 
 #-- Start Script
 echo "-> SSH Signer <-"
@@ -10,7 +11,7 @@ read -p "Enter password: " -s PASSWORD
 echo ""
 echo "----------------"
 
-TOKEN=$(curl $VAULT_URL/auth/userpass/login/$USERNAME --request POST --data "{\"password\":\"$PASSWORD\"}" --insecure -s | jq -r '.auth.client_token')
+TOKEN=$(curl $VAULT_URL/auth/$AUTH_TYPE/login/$USERNAME --request POST --data "{\"password\":\"$PASSWORD\"}" --insecure -s | jq -r '.auth.client_token')
 if [ $TOKEN = "null" ]
 then
       echo "Error password"

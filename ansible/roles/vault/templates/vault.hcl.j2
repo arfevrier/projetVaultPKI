@@ -1,9 +1,9 @@
 listener "tcp" {  
   address          = "0.0.0.0:8200"  
   cluster_address  = "0.0.0.0:8201" 
-  tls_disable = "true"
-  #tls_cert_file = "{{vault_config_path}}tls.crt"  
-  #tls_key_file  = "{{vault_config_path}}tls.key"
+  #tls_disable = "true"
+  tls_cert_file = "{{vault_config_path}}tls.crt"  
+  tls_key_file  = "{{vault_config_path}}tls.key"
 }
 
 storage "raft" {
@@ -11,7 +11,7 @@ storage "raft" {
   path  = "{{vault_data_dir}}data"
   {% for hosts in groups['vault'] %}
   retry_join {
-    leader_api_addr   = "http://{{ hosts }}:8200"      
+    leader_api_addr   = "https://{{ hosts }}:8200"      
   }
   {% endfor %}
 }
@@ -25,6 +25,6 @@ seal "transit" {
   tls_skip_verify = "true"
 }
 
-api_addr = "http://{{inventory_hostname}}:8200"
-cluster_addr = "http://{{inventory_hostname}}:8201"
+api_addr = "https://{{inventory_hostname}}:8200"
+cluster_addr = "https://{{inventory_hostname}}:8201"
 ui = true

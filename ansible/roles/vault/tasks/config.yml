@@ -23,28 +23,23 @@
     - "{{vault_data_dir}}"
     - "{{vault_data_dir}}data"
 
-- name: Generate an OpenSSL private key.
-  openssl_privatekey:
-    path: "{{vault_config_path}}tls.key"
+- name: Copy public key - HTTPS
+  notify: restart_vault
+  copy:
+    src: ../ssl/vault_web.crt
+    dest: "{{vault_config_path}}tls.crt"
     owner: "{{ vault_user }}"
     group: "{{ vault_group }}"
+    mode: '0644'
 
-- name: Generate an OpenSSL CSR.
-  openssl_csr:
-    path: "{{vault_config_path}}tls.csr"
-    privatekey_path: "{{vault_config_path}}tls.key"
-    common_name: "Vault Trusted"
+- name: Copy private key - HTTPS
+  notify: restart_vault
+  copy:
+    src: ../ssl/vault_web.key
+    dest: "{{vault_config_path}}tls.key"
     owner: "{{ vault_user }}"
     group: "{{ vault_group }}"
-
-- name: Generate a Self Signed OpenSSL certificate.
-  openssl_certificate:
-    path: "{{vault_config_path}}tls.crt"
-    privatekey_path: "{{vault_config_path}}tls.key"
-    csr_path: "{{vault_config_path}}tls.csr"
-    provider: selfsigned
-    owner: "{{ vault_user }}"
-    group: "{{ vault_group }}"
+    mode: '0400'
   
 - name: config file
   become: yes
