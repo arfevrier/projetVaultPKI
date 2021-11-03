@@ -9,7 +9,7 @@ resource "vault_ldap_auth_backend" "ldap" {
     url         = "ldap://192.168.100.22"
     userdn      = "CN=Users,DC=INSA,DC=4AS"
     userattr    = "sAMAccountName"
-    binddn      = "CN=Arnaud Fevrier,CN=Users,DC=INSA,DC=4AS"
+    binddn      = "CN=Vault,CN=Users,DC=INSA,DC=4AS"
     bindpass    = file("../../ssl/password.key")
     groupdn     = "CN=Users,DC=INSA,DC=4AS"
     groupfilter = "(&(objectClass=person)(sAMAccountName={{.Username}}))"
