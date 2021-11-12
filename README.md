@@ -37,7 +37,7 @@ Les commandes Terraform nécéssitent d'avoir correctement configuré la variabl
 
 #### 2. Installation du Trusted Vault
 
-> ansible-playbook -i inventory.yml 1-trusted-vault.yml
+> ansible-playbook -i inventory.yml 1-trusted-vault.yml --ask-pass
 
 Finalisation de l'installation, avec la récupération d'un token d'authorisation pour le 
 
@@ -57,7 +57,7 @@ Put the token in a file `ansible/.secret.yml` with *token* key.
 
 #### 3. Installation du cluster Vault
 
-> ansible-playbook -i inventory.yml 2-cluster-vault.yml
+> ansible-playbook -i inventory.yml 2-cluster-vault.yml --ask-pass
 
 `VAULT_ADDR="http://127.0.0.1:8200" vault operator init > initial`
 
@@ -70,7 +70,7 @@ terraform init && terraform apply
 
 #### 4. Déploiement du CA PKI SSH
 
-> ansible-playbook -i inventory.yml 3-deply-CA.yml
+> ansible-playbook -i inventory.yml 3-deply-CA.yml --ask-pass
 
 # Ressource 📚
 
