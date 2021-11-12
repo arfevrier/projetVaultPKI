@@ -64,7 +64,10 @@ resource "vault_ssh_secret_backend_role" "ssh-4as-opsi" {
 resource "vault_policy" "ssh-4as-full-access" {
   name = "ssh-4as-full-access"
   policy = <<EOT
-path "ssh-4as/sign/admin" {
+path "ssh-4as/sign/opsi" {
+  capabilities = ["update"]
+}
+path "ssh-4as/sign/reseau" {
   capabilities = ["update"]
 }
 EOT
