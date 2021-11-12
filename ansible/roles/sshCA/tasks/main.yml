@@ -1,28 +1,3 @@
-- name: SSH Installation
-  become: yes
-  apt: name=openssh-server state=latest
-
-- name: Download the SSH CA
-  get_url:
-    validate_certs: no
-    url: "{{ vault.url }}{{ vault.ssh }}/public_key"
-    dest: /etc/ssh/sshCA.crt
-    mode: '0440'
-  notify:
-    - Restart SSH server
-
-- name: Add the CA to sshd config file
-  lineinfile:
-    path: /etc/ssh/sshd_config
-    regexp: "^TrustedUserCAKeys"
-    line: "TrustedUserCAKeys /etc/ssh/sshCA.crt"
-  notify:
-    - Restart SSH server
-
-- name: Start SSH server
-  become: yes
-  service: name=ssh state=started enabled=true
-
 - name: Install CA package
   apt:
     name: ca-certificates
@@ -38,3 +13,44 @@
     mode: 0644
   notify:
     - Update trusted CA
+
+- name: SSH Installation
+  become: yes
+  apt: name=openssh-server state=latest
+
+- name: Download the SSH CA
+  get_url:
+    #validate_certs: no
+    url: "{{ vault.url }}{{ vault.ssh }}/public_key"
+    dest: /etc/ssh/sshCA.crt
+    mode: '0440'
+  notify:
+    - Restart SSH server
+
+- name: Add the CA to sshd config file
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: "^TrustedUserCAKeys "
+    line: "TrustedUserCAKeys /etc/ssh/sshCA.crt"
+  notify:
+    - Restart SSH server
+
+- name: Add user principals command
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: "^AuthorizedPrincipalsCommand "
+    line: "AuthorizedPrincipalsCommand /usr/bin/echo {{ vault_group }}"
+  notify:
+    - Restart SSH server
+
+- name: Add user principals user command
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: "^AuthorizedPrincipalsCommandUser "
+    line: "AuthorizedPrincipalsCommandUser root"
+  notify:
+    - Restart SSH server
+
+- name: Start SSH server
+  become: yes
+  service: name=ssh state=started enabled=true

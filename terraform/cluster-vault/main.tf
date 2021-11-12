@@ -31,15 +31,30 @@ resource "vault_ssh_secret_backend_ca" "ssh-4as-ca" {
     generate_signing_key = true
 }
 
-resource "vault_ssh_secret_backend_role" "ssh-4as-admin" {
-    name     = "admin"
+resource "vault_ssh_secret_backend_role" "ssh-4as-reseau" {
+    name     = "reseau"
     backend  = vault_mount.ssh-4as.path
     key_type = "ca"
     algorithm_signer = "rsa-sha2-256"
 
     allow_user_certificates = true
-    default_user = "root"
-    allowed_users = "*"
+    default_user = "reseau"
+    allowed_users = "reseau"
+    default_extensions = {
+        permit-pty = ""
+        permit-port-forwarding = ""
+    }
+}
+
+resource "vault_ssh_secret_backend_role" "ssh-4as-opsi" {
+    name     = "opsi"
+    backend  = vault_mount.ssh-4as.path
+    key_type = "ca"
+    algorithm_signer = "rsa-sha2-256"
+
+    allow_user_certificates = true
+    default_user = "opsi"
+    allowed_users = "opsi"
     default_extensions = {
         permit-pty = ""
         permit-port-forwarding = ""
@@ -67,7 +82,8 @@ resource "vault_pki_secret_backend_config_ca" "ca-4as-cert-ca" {
 resource "vault_pki_secret_backend_role" "role" {
   backend          = vault_pki_secret_backend.ca-4as-cert.path
   name             = "domain_4as"
-  ttl              = 1314000
+  ttl              = 30000000
+  max_ttl          = 30000000
   allowed_domains  = ["4as"]
   allow_subdomains = true
 }

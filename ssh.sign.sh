@@ -25,7 +25,7 @@ read -p "Requested SSH login user: " REQ_USER
 #Get the public key of the current user
 PUBLICKEY=$(cat ~/.ssh/id_rsa.pub)
 #Sign it
-SIGNEDKEY=$(curl $VAULT_URL/ssh-4as/sign/admin -H "X-Vault-Token: $TOKEN" --request POST --data "{\"valid_principals\":\"$REQ_USER\", \"public_key\":\"$PUBLICKEY\"}" --insecure -s | jq -r '.data.signed_key')
+SIGNEDKEY=$(curl $VAULT_URL/ssh-4as/sign/$REQ_USER -H "X-Vault-Token: $TOKEN" --request POST --data "{\"valid_principals\":\"$REQ_USER\", \"public_key\":\"$PUBLICKEY\"}" --insecure -s | jq -r '.data.signed_key')
 
 if [ "$SIGNEDKEY" = "null" ]
 then

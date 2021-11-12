@@ -13,8 +13,11 @@ all:
       hosts:
         192.168.100.2:
           ansible_user: opsi
-        192.168.100.[3:4]:
-          ansible_user: vault
-        192.168.100.6:
-          ansible_user: vault
+          vault_group: opsi
+        192.168.100.100:
+          ansible_user: user
+          vault_group: reseau
+        192.168.100.200:
+          ansible_user: user
+          vault_group: reseau
         
