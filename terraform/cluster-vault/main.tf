@@ -64,9 +64,24 @@ resource "vault_ssh_secret_backend_role" "ssh-4as-opsi" {
 resource "vault_policy" "ssh-4as-full-access" {
   name = "ssh-4as-full-access"
   policy = <<EOT
+path "ssh-4as/sign/*" {
+  capabilities = ["update"]
+}
+EOT
+}
+
+resource "vault_policy" "ssh-4as-opsi" {
+  name = "ssh-4as-opsi"
+  policy = <<EOT
 path "ssh-4as/sign/opsi" {
   capabilities = ["update"]
 }
+EOT
+}
+
+resource "vault_policy" "ssh-4as-reseau" {
+  name = "ssh-4as-reseau"
+  policy = <<EOT
 path "ssh-4as/sign/reseau" {
   capabilities = ["update"]
 }
@@ -103,8 +118,20 @@ path "ca-4as-cert/roles" {
 EOT
 }
 
-resource "vault_ldap_auth_backend_group" "group" {
+resource "vault_ldap_auth_backend_group" "group-etudiant" {
     groupname = "Etudiant"
-    policies  = ["domain-4as-sign", "ssh-4as-full-access"]
+    policies  = ["domain-4as-sign"]
+    backend   = vault_ldap_auth_backend.ldap.path
+}
+
+resource "vault_ldap_auth_backend_group" "group-deploiement" {
+    groupname = "deploiement"
+    policies  = ["ssh-4as-opsi"]
+    backend   = vault_ldap_auth_backend.ldap.path
+}
+
+resource "vault_ldap_auth_backend_group" "group-reseau" {
+    groupname = "reseaux"
+    policies  = ["ssh-4as-reseau"]
     backend   = vault_ldap_auth_backend.ldap.path
 }
