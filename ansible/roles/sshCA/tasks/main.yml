@@ -4,6 +4,18 @@
     state: present
     update_cache: yes
 
+- name: Install JQ package
+  apt:
+    name: jq
+    state: present
+    update_cache: yes
+
+- name: Install Curl package
+  apt:
+    name: curl
+    state: present
+    update_cache: yes
+
 - name: Copy certificate authority to trusted CA path
   copy:
     src: ../ssl/ca4AS.crt
@@ -20,7 +32,7 @@
 
 - name: Download the SSH CA
   get_url:
-    #validate_certs: no
+    validate_certs: no
     url: "{{ vault.url }}{{ vault.ssh }}/public_key"
     dest: /etc/ssh/sshCA.crt
     mode: '0440'
@@ -66,6 +78,31 @@
     line: "HostCertificate /etc/ssh/ssh_host_rsa_key-cert.pub"
   notify:
     - Restart SSH server
+
+- name: Copy Vault host Key
+  copy:
+    src: ../ssl/ssh_host.key
+    dest: '/etc/ssh/vault.host.key'
+    owner: root
+    group: root
+    mode: 0400
+
+- name: Copy SSH host sign script
+  become: yes
+  template:
+    src: ssh.host.sign.sh.j2
+    dest: '/etc/ssh/ssh.host.sign.sh'
+    owner: root
+    group: root
+    mode: 0700
+
+- name: Sign the host ssh key
+  ansible.builtin.cron:
+    name: "Sign the host ssh key"
+    minute: "0"
+    hour: "*"
+    user: root
+    job: "/etc/ssh/ssh.host.sign.sh `cat /etc/ssh/vault.host.key`"
 
 - name: Start SSH server
   become: yes

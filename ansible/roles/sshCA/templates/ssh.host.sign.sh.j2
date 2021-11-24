@@ -1,0 +1,26 @@
+#!/bin/bash
+
+#-- Vault configuration
+VAULT_NAME="vault.4as"
+VAULT_URL="https://vault.4as:8200/v1"
+AUTH_TOKEN=$1
+HOST_NAME="{{ dns_name }}"
+
+#-- Start Script
+echo "-> SSH Signer Host | $VAULT_NAME <-"
+
+#Get the public key of the current host
+PUBLICKEY=$(cat /etc/ssh/ssh_host_rsa_key.pub)
+#Sign it
+SIGNEDKEY=$(curl $VAULT_URL/ssh-4as-host/sign/host-sign -H "X-Vault-Token: $AUTH_TOKEN" --request POST --data "{\"valid_principals\":\"$HOST_NAME\", \"public_key\":\"$PUBLICKEY\", \"cert_type\":\"host\"}" --insecure -s | jq -r '.data.signed_key')
+#Renew the token
+curl $VAULT_URL/auth/token/renew-self -H "X-Vault-Token: $AUTH_TOKEN" --request POST --insecure -s
+
+if [ "$SIGNEDKEY" = "null" ]
+then
+      echo "/!\ Impossible to sign the ssh key [/etc/ssh/ssh_host_rsa_key.pub] for $HOST_NAME principal"
+      echo "    Requested access not authorized for the token"
+      exit
+fi
+
+echo $SIGNEDKEY > /etc/ssh/ssh_host_rsa_key-cert.pub

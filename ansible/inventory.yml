@@ -14,10 +14,13 @@ all:
         192.168.100.2:
           ansible_user: opsi
           vault_group: opsi
+          dns_name: opsi.4as
         192.168.100.100:
           ansible_user: user
           vault_group: reseau
+          dns_name: ns.4as
         192.168.100.200:
           ansible_user: user
           vault_group: reseau
+          dns_name: dhcp.4as
         

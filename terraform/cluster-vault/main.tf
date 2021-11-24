@@ -157,7 +157,7 @@ resource "vault_ssh_secret_backend_role" "ssh-4as-host" {
     algorithm_signer = "rsa-sha2-256"
 
     allow_host_certificates = true
-    allowed_domains  = ["4as"]
+    allowed_domains  = "4as"
     allow_subdomains = true
 }
 
