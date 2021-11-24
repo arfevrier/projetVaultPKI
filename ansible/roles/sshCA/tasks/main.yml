@@ -50,6 +50,22 @@
     line: "AuthorizedPrincipalsCommandUser root"
   notify:
     - Restart SSH server
+    
+- name: Add Host key in sshd
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: "^HostKey "
+    line: "HostKey /etc/ssh/ssh_host_rsa_key"
+  notify:
+    - Restart SSH server
+    
+- name: Add Host Certificate in sshd
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: "^HostCertificate "
+    line: "HostCertificate /etc/ssh/ssh_host_rsa_key-cert.pub"
+  notify:
+    - Restart SSH server
 
 - name: Start SSH server
   become: yes
