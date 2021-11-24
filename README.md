@@ -29,6 +29,12 @@ Chaque serveur SSH possède le certificat Vault CA. Ainsi chaque serveur reconna
 
 ### ➔ Installation ⚙️
 
+#### Cluster
+Le cluster est composé de deux serveurs vault avec des backends raft en mode haute disponibilité.
+Les serveurs communiquent avec du TLS.
+Pour éviter du downtime en production nous avons configuré un serveur vault(trusted-vault) auquel on a confiance pour dévérouiller les serveurs du cluster de manière automatique en utilisant une clé transit.
+![Schema indicatif](https://learn.hashicorp.com/img/vault-raft-1.png)
+
 #### 1. Configuation
 
 Les commandes Ansible nécéssitent la configuration des fichiers (`group_vars/host`) et (`inventory.yml`).
