@@ -76,7 +76,7 @@ terraform init && terraform apply
 
 #### 4. Déploiement du CA PKI SSH
 
-> ansible-playbook -i inventory.yml 3-deply-CA.yml --ask-pass
+> ansible-playbook -i inventory.yml 3-deploy-CA.yml --ask-pass
 
 # Ressource 📚
 
