@@ -135,3 +135,35 @@ resource "vault_ldap_auth_backend_group" "group-reseau" {
     policies  = ["ssh-4as-reseau"]
     backend   = vault_ldap_auth_backend.ldap.path
 }
+
+resource "vault_mount" "ssh-4as-host" {
+    type = "ssh"
+    path = "ssh-4as-host"
+
+    # Accès pour 4h par défaut, jusqu'à 12h.
+    default_lease_ttl_seconds = "14400"  # 4h
+    max_lease_ttl_seconds     = "43200" # 1w
+}
+
+resource "vault_ssh_secret_backend_ca" "ssh-4as-host" {
+    backend = vault_mount.ssh-4as-host.path
+    generate_signing_key = true
+}
+
+resource "vault_ssh_secret_backend_role" "ssh-4as-host" {
+    name     = "host-sign"
+    backend  = vault_mount.ssh-4as-host.path
+    key_type = "ca"
+    algorithm_signer = "rsa-sha2-256"
+
+    allow_host_certificates = true
+}
+
+resource "vault_policy" "ssh-4as-host-full-access" {
+  name = "ssh-4as-host-full-access"
+  policy = <<EOT
+path "ssh-4as-host/sign/*" {
+  capabilities = ["update"]
+}
+EOT
+}
