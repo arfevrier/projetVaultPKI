@@ -169,3 +169,18 @@ path "ssh-4as-host/sign/*" {
 }
 EOT
 }
+
+resource "vault_auth_backend" "approle" {
+  type = "approle"
+}
+
+resource "vault_approle_auth_backend_role" "ssh-4as-host-approle" {
+  backend        = vault_auth_backend.approle.path
+  role_name      = "ssh-4as-host-approle"
+  bind_secret_id = false
+  token_ttl      = 1200
+  token_max_ttl  = 1800
+  token_policies = ["ssh-4as-host-full-access"]
+  token_bound_cidrs = ["192.168.100.0/24"]
+  token_num_uses = 10
+}

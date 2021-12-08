@@ -95,6 +95,8 @@
     owner: root
     group: root
     mode: 0700
+  notify:
+    - Update host SSH cert signature
 
 - name: Sign the host ssh key
   ansible.builtin.cron:

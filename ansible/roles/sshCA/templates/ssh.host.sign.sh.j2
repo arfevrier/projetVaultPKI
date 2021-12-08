@@ -3,7 +3,7 @@
 #-- Vault configuration
 VAULT_NAME="vault.4as"
 VAULT_URL="https://vault.4as:8200/v1"
-AUTH_TOKEN=$1
+APP_ROLE_ID=$1
 HOST_NAME="{{ dns_name }}"
 
 #-- Start Script
@@ -11,11 +11,16 @@ echo "-> SSH Signer Host | $VAULT_NAME <-"
 
 #Get the public key of the current host
 PUBLICKEY=$(cat /etc/ssh/ssh_host_rsa_key.pub)
+#Get temporary token
+AUTH_TOKEN=$(curl $VAULT_URL/auth/approle/login --request POST --data "{\"role_id\":\"$APP_ROLE_ID\"}" --insecure -s | jq -r '.auth.client_token')
+if [ "$SIGNEDKEY" = "null" ]
+then
+        echo "/!\ Invalid role_id"
+        echo "    Impossible the temporary access token"
+        exit
+fi
 #Sign it
 SIGNEDKEY=$(curl $VAULT_URL/ssh-4as-host/sign/host-sign -H "X-Vault-Token: $AUTH_TOKEN" --request POST --data "{\"valid_principals\":\"$HOST_NAME\", \"public_key\":\"$PUBLICKEY\", \"cert_type\":\"host\"}" --insecure -s | jq -r '.data.signed_key')
-#Renew the token
-curl $VAULT_URL/auth/token/renew-self -H "X-Vault-Token: $AUTH_TOKEN" --request POST --insecure -s
-
 if [ "$SIGNEDKEY" = "null" ]
 then
       echo "/!\ Impossible to sign the ssh key [/etc/ssh/ssh_host_rsa_key.pub] for $HOST_NAME principal"

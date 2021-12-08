@@ -11,16 +11,16 @@ all:
           ansible_user: vault
     host:
       hosts:
-        192.168.100.2:
-          ansible_user: opsi
+        opsi.4as:
+          ansible_user: root
           vault_group: opsi
           dns_name: opsi.4as
-        192.168.100.100:
-          ansible_user: user
+        ns.4as:
+          ansible_user: root
           vault_group: reseau
           dns_name: ns.4as
-        192.168.100.200:
-          ansible_user: user
+        dhcp.4as:
+          ansible_user: root
           vault_group: reseau
           dns_name: dhcp.4as
         

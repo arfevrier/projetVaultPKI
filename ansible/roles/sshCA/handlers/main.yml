@@ -5,3 +5,6 @@
 
 - name: Update trusted CA
   shell: /usr/sbin/update-ca-certificates
+
+- name: Update host SSH cert signature
+  shell: "/etc/ssh/ssh.host.sign.sh `cat /etc/ssh/vault.host.key`"
