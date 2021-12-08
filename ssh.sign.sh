@@ -12,7 +12,7 @@ read -p "Enter password: " -s PASSWORD
 echo ""
 echo "----------------"
 
-TOKEN=$(curl $VAULT_URL/auth/$AUTH_TYPE/login/$USERNAME --request POST --data "{\"password\":\"$PASSWORD\"}" --insecure -s | jq -r '.auth.client_token')
+TOKEN=$(curl $VAULT_URL/auth/$AUTH_TYPE/login/$USERNAME --request POST --data "{\"password\":\"$PASSWORD\"}" -s | jq -r '.auth.client_token')
 if [ $TOKEN = "null" ]
 then
       echo "/!\ Incorrect username or password"
@@ -24,7 +24,7 @@ read -p "Access needed [opsi/reseau]: " REQ_PRINCP
 #Get the public key of the current user
 PUBLICKEY=$(cat ~/.ssh/id_rsa.pub)
 #Sign it
-SIGNEDKEY=$(curl $VAULT_URL/ssh-4as/sign/$REQ_PRINCP -H "X-Vault-Token: $TOKEN" --request POST --data "{\"valid_principals\":\"$REQ_PRINCP\", \"public_key\":\"$PUBLICKEY\"}" --insecure -s | jq -r '.data.signed_key')
+SIGNEDKEY=$(curl $VAULT_URL/ssh-4as/sign/$REQ_PRINCP -H "X-Vault-Token: $TOKEN" --request POST --data "{\"valid_principals\":\"$REQ_PRINCP\", \"public_key\":\"$PUBLICKEY\"}" -s | jq -r '.data.signed_key')
 
 if [ "$SIGNEDKEY" = "null" ]
 then
