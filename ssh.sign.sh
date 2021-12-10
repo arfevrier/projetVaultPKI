@@ -38,4 +38,8 @@ echo $SIGNEDKEY > ~/.ssh/id_rsa-cert.pub
 #Update the known_hosts file
 SSH_HOST_PUBLIC_KEY=$(curl https://vault1.4as:8200/v1/ssh-4as-host/public_key -s)
 touch ~/.ssh/known_hosts
-sed -i "/\@cert-authority \*\.4as/c @cert-authority \*\.4as $SSH_HOST_PUBLIC_KEY" ~/.ssh/known_hosts
+if [[ -z `cat ~/.ssh/known_hosts | grep "@cert-authority \*\.4as"` ]]; then
+	echo "@cert-authority *.4as $SSH_HOST_PUBLIC_KEY\n" >> ~/.ssh/known_hosts
+else
+	sed -i "/\@cert-authority \*\.4as/c @cert-authority \*\.4as $SSH_HOST_PUBLIC_KEY" ~/.ssh/known_hosts
+fi
