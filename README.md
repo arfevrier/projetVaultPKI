@@ -74,7 +74,9 @@ cd terraform/cluster-vault
 terraform init && terraform apply
 ```
 
-#### 4. Déploiement du CA PKI SSH
+#### 4. Déploiement du CA PKI SSH et enregistrement de l'hôte
+
+La dernière partie du déploiement Ansible comprend la définition et l'installation des hôtes SSH. Sur ces hôtes il est nécessaire de configurer la clé publique SSH Vault (CA Vault) puis d'enregistrer l'hôte sur le cluster Vault. De cette manière, les clients qui se connecteront sur l'hôte enregistré auront déjà le fingerprint validé par la CA Vault.
 
 > ansible-playbook -i inventory.yml 3-deploy-CA.yml --ask-pass
 
