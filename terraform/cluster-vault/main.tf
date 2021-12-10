@@ -4,6 +4,14 @@ provider "vault" {
     # Token: export VAULT_TOKEN="xxxx"
 }
 
+resource "vault_audit" "file" {
+  type = "file"
+
+  options = {
+    file_path = "/var/lib/vault/vault_audit.log"
+  }
+}
+
 resource "vault_ldap_auth_backend" "ldap" {
     path        = "ldap"
     url         = "ldap://192.168.100.22"
