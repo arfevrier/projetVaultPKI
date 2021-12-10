@@ -192,3 +192,52 @@ resource "vault_approle_auth_backend_role" "ssh-4as-host-approle" {
   token_bound_cidrs = ["192.168.100.0/24"]
   token_num_uses = 10
 }
+
+## Some secrets
+
+resource "vault_mount" "secret-kube" {
+  path        = "secret-kube"
+  type        = "kv-v2"
+}
+
+resource "vault_generic_secret" "secret-kube-test" {
+  path = "secret-kube/test"
+
+  data_json = <<EOT
+{
+  "foo":   "bar",
+  "pizza": "cheese"
+}
+EOT
+}
+
+resource "vault_policy" "secret-kube-read" {
+  name = "secret-kube-read"
+  policy = <<EOT
+path "secret-kube/*" {
+  capabilities = ["read"]
+}
+EOT
+}
+
+resource "vault_auth_backend" "kubernetes" {
+  type = "kubernetes"
+}
+
+resource "vault_kubernetes_auth_backend_config" "kube-4as" {
+  backend                = vault_auth_backend.kubernetes.path
+  kubernetes_host        = "https://192.168.100.208:6443"
+  kubernetes_ca_cert     = "-----BEGIN CERTIFICATE-----\nMIIC/jCCAeagAwIBAgIBADANBgkqhkiG9w0BAQsFADAVMRMwEQYDVQQDEwprdWJl\ncm5ldGVzMB4XDTIxMTAyMTIxMDAwNVoXDTMxMTAxOTIxMDAwNVowFTETMBEGA1UE\nAxMKa3ViZXJuZXRlczCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAMGk\nd0PAoaLVILh70n6GMpWfgDvpZcX8iK8EVskdgQUIFAU4U8C9SQ1aiWUVVTWRi7DO\ny8QnSgHKYPJW1IfnKyPsenn/o+4C2zBr/C7H8lLsL+ugtCmSUuuhp5Zlxye0Cjnb\ntc1iz0OOP1xOI/1wiB7xGVYgbHsoZGuxYZwQH7r29FXHuZpBPwrNCSOpVmiB/O7h\neTx0PIQf3u5XulC3PG4Stnnh6gKH1Fgw637gxwWGwVFEDJDZB4iSFkg5jIDSLnoF\nVtHW3fklEGEKa6IcuIy3WSQE0wpyNN4xTQnUmY229lKG9isUr1td53HckIAnAfDa\nXZi+Y8jPqR7JXwIR5vsCAwEAAaNZMFcwDgYDVR0PAQH/BAQDAgKkMA8GA1UdEwEB\n/wQFMAMBAf8wHQYDVR0OBBYEFG+OSaKxwOI10YbSdUzfaMWjFrC8MBUGA1UdEQQO\nMAyCCmt1YmVybmV0ZXMwDQYJKoZIhvcNAQELBQADggEBACXx5v38hO08bRliftzJ\nACRcqDhm7GesKrQXH9IrIuMv5p3Cngym225vDsrc5Et3tK8crDOE3k0phue5MnV8\nApSh2ErCz03+AzXhfifRs3sEzItPGJ88FTyIH9ikHKXoMwGFQFIuu3mMr9IowwGv\nZn11bM3b2ULiq4Of+1jNS5BaInGaBAU6iHLbnzapWfa23GJZzs+ACZJM9IU08ufq\nLFvxp6fL73ewb7c7N8vz2f6pmvFkZ61aH3jYeuuVInKSyHxt/geWbs6KYT5rkhzB\nmVL41zywe9atViz1BCOpZvKJlPgfYoZPSr13eXQ119M9l0xiSkqSnMkm2KpPMn76\nGLI=\n-----END CERTIFICATE-----"
+  token_reviewer_jwt     = file("../../ssl/kubernetes.key")
+  issuer                 = "https://kubernetes.default.svc.cluster.local"
+  #disable_iss_validation = "true" //Kubernetes +v1.21 https://github.com/external-secrets/kubernetes-external-secrets/issues/721
+}
+
+resource "vault_kubernetes_auth_backend_role" "kube-4as" {
+  backend                          = vault_auth_backend.kubernetes.path
+  role_name                        = "kube-4as"
+  bound_service_account_names      = ["default"]
+  bound_service_account_namespaces = ["vault"]
+  token_ttl                        = 3600
+  token_policies                   = ["default", "secret-kube-read"]
+}

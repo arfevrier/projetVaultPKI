@@ -1,0 +1,69 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  namespace: vault
+  labels:
+    app: nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+      annotations:
+        vault.hashicorp.com/agent-inject: 'true'
+        vault.hashicorp.com/role: 'kube-4as'
+        vault.hashicorp.com/ca-cert: "/vault/tls/ca.crt"
+        vault.hashicorp.com/tls-secret: "ca-4as"
+        #vault.hashicorp.com/log-level: "debug"
+        #vault.hashicorp.com/tls-skip-verify: "true"
+        vault.hashicorp.com/agent-pre-populate-only: 'true'
+        vault.hashicorp.com/agent-inject-secret-test.txt: 'secret-kube/test'
+        vault.hashicorp.com/agent-inject-template-test.txt: |
+          {{ with secret "secret-kube/test" }}
+          foo={{ .Data.data.foo }}
+          pizza={{ .Data.data.pizza }}
+          {{ end }}
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.14.2
+        ports:
+        - containerPort: 80
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: ca-4as
+  namespace: vault
+type: Opaque
+stringData:
+  ca.crt: |-
+    -----BEGIN CERTIFICATE-----
+    MIIEBTCCAu2gAwIBAgIUGuSZdWsgtqJpGNamDxT1a+X+FGcwDQYJKoZIhvcNAQEL
+    BQAwgZExCzAJBgNVBAYTAkZSMQ8wDQYDVQQIDAZGcmFuY2UxEDAOBgNVBAcMB0Jv
+    dXJnZXMxEDAOBgNVBAoMB0lOU0FDVkwxDDAKBgNVBAsMAzRBUzEUMBIGA1UEAwwL
+    NEFTIFJPT1QgQ0ExKTAnBgkqhkiG9w0BCQEWGmFybmF1ZC5mZXZyaWVyQGluc2Et
+    Y3ZsLmZyMB4XDTIxMTAyODEyNDgyN1oXDTMxMTAyNjEyNDgyN1owgZExCzAJBgNV
+    BAYTAkZSMQ8wDQYDVQQIDAZGcmFuY2UxEDAOBgNVBAcMB0JvdXJnZXMxEDAOBgNV
+    BAoMB0lOU0FDVkwxDDAKBgNVBAsMAzRBUzEUMBIGA1UEAwwLNEFTIFJPT1QgQ0Ex
+    KTAnBgkqhkiG9w0BCQEWGmFybmF1ZC5mZXZyaWVyQGluc2EtY3ZsLmZyMIIBIjAN
+    BgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAz5K7NOwXB1yywhw+JGr2s/sPvUc1
+    zkWJIaMTaDRAP9tA+xxWptwI6WvecuNjugANCy72TV0LqHUYz+n/g5tkfudwbWAz
+    1LA3chYK/1K3bdapuBF2twgbZwpjYsCJyqh1dd1kH8EwyFL5dUZbZ+auFnQLzpEg
+    1HsxlcKGslb9jAMsSTkfoGmicDlr6Zq0fyjxVnWHTpKJcCG1p/JCaXKs1Usfvjds
+    VXA9qUMX0Qabu1QNhca33WgqlCVHu3rIIk89jbgvQyufVxP39PTmdjGGgNUASseG
+    etCrWIc+0hb3dBnHKC4yLHZBYPs1NEdGb8noLthRCvkkhxZFBIvtWkuSQwIDAQAB
+    o1MwUTAdBgNVHQ4EFgQUiiE36mYhVbbYVz7HdGoAWu4+LVEwHwYDVR0jBBgwFoAU
+    iiE36mYhVbbYVz7HdGoAWu4+LVEwDwYDVR0TAQH/BAUwAwEB/zANBgkqhkiG9w0B
+    AQsFAAOCAQEAvn/m41p4oziiEMWbwl3hh5gSs5Sr68Fy+PXKTolV3E4pACxAEl+D
+    jU1v3UPHozdf6RKlyH76YCDC0Mzmq2QHBfA3uoffAf007tGfxNk+IlsQqskc+Xl2
+    3oNtp1oVR9/JEgJgLCnUUpWyjtG+UfZ3TS/k8iVlAEcqguND8hxf5/1uYbKJRWHp
+    fNu8uGCW+9mFk8TdN/NXtEeq+UACchIKIf6wk+fonYoNnndM+e8xbne0pZI58XCu
+    GvbOiPRf/o2nV8gpgWy8Mi2w7UJ7Ko697TSqIfPyN2+tiO2pDGBVi4NWHGTaMSc3
+    e9nrpTBkgkQaITFTnNEh9OougD1rRwDo7A==
+    -----END CERTIFICATE-----

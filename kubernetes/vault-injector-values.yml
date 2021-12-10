@@ -1,0 +1,9 @@
+# Helm values file use to deploy Vault Injector Agent
+#
+# Modification:
+# - All content from 
+#
+#
+injector:
+    enabled: true
+    externalVaultAddr: "https://vault.4as:8200/"
