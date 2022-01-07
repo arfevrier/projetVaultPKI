@@ -144,6 +144,12 @@ resource "vault_ldap_auth_backend_group" "group-reseau" {
     backend   = vault_ldap_auth_backend.ldap.path
 }
 
+resource "vault_ldap_auth_backend_group" "group-kubernetes" {
+    groupname = "kubernetes"
+    policies  = ["secret-kube-full-access"]
+    backend   = vault_ldap_auth_backend.ldap.path
+}
+
 resource "vault_mount" "ssh-4as-host" {
     type = "ssh"
     path = "ssh-4as-host"
@@ -216,6 +222,15 @@ resource "vault_policy" "secret-kube-read" {
   policy = <<EOT
 path "secret-kube/*" {
   capabilities = ["read"]
+}
+EOT
+}
+
+resource "vault_policy" "secret-kube-full-access" {
+  name = "secret-kube-full-access"
+  policy = <<EOT
+path "secret-kube/*" {
+  capabilities = ["create", "read", "update", "delete", "list"]
 }
 EOT
 }
