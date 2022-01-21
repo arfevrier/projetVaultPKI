@@ -114,6 +114,12 @@ resource "vault_pki_secret_backend_role" "role" {
   allow_subdomains = true
 }
 
+resource "vault_pki_secret_backend_config_urls" "config_urls" {
+  backend              = vault_pki_secret_backend.ca-4as-cert.path
+  issuing_certificates = ["https://vault.4as:8200/v1/ca-4as-cert/ca"]
+  crl_distribution_points = ["https://vault.4as:8200/v1/ca-4as-cert/crl"]
+}
+
 resource "vault_policy" "domain-4as-sign" {
   name = "domain-4as-sign"
   policy = <<EOT
@@ -124,6 +130,25 @@ path "ca-4as-cert/roles" {
   capabilities = ["list"]
 }
 EOT
+}
+
+resource "vault_policy" "cert-manager" {
+  name = "cert-manager"
+
+  policy = <<EOF
+    path "ca-4as-cert/*" { 
+      capabilities = ["read", "list"] 
+    }
+    path "ca-4as-cert/roles/domain_4as" { 
+      capabilities = ["create", "update"] 
+    }
+    path "ca-4as-cert/sign/domain_4as"  { 
+      capabilities = ["create", "update"]
+    }
+    path "ca-4as-cert/issue/domain_4as" { 
+      capabilities = ["create"] 
+    }
+  EOF
 }
 
 resource "vault_ldap_auth_backend_group" "group-etudiant" {
@@ -242,17 +267,17 @@ resource "vault_auth_backend" "kubernetes" {
 resource "vault_kubernetes_auth_backend_config" "kube-4as" {
   backend                = vault_auth_backend.kubernetes.path
   kubernetes_host        = "https://192.168.100.208:6443"
-  kubernetes_ca_cert     = "-----BEGIN CERTIFICATE-----\nMIIC/jCCAeagAwIBAgIBADANBgkqhkiG9w0BAQsFADAVMRMwEQYDVQQDEwprdWJl\ncm5ldGVzMB4XDTIxMTAyMTIxMDAwNVoXDTMxMTAxOTIxMDAwNVowFTETMBEGA1UE\nAxMKa3ViZXJuZXRlczCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAMGk\nd0PAoaLVILh70n6GMpWfgDvpZcX8iK8EVskdgQUIFAU4U8C9SQ1aiWUVVTWRi7DO\ny8QnSgHKYPJW1IfnKyPsenn/o+4C2zBr/C7H8lLsL+ugtCmSUuuhp5Zlxye0Cjnb\ntc1iz0OOP1xOI/1wiB7xGVYgbHsoZGuxYZwQH7r29FXHuZpBPwrNCSOpVmiB/O7h\neTx0PIQf3u5XulC3PG4Stnnh6gKH1Fgw637gxwWGwVFEDJDZB4iSFkg5jIDSLnoF\nVtHW3fklEGEKa6IcuIy3WSQE0wpyNN4xTQnUmY229lKG9isUr1td53HckIAnAfDa\nXZi+Y8jPqR7JXwIR5vsCAwEAAaNZMFcwDgYDVR0PAQH/BAQDAgKkMA8GA1UdEwEB\n/wQFMAMBAf8wHQYDVR0OBBYEFG+OSaKxwOI10YbSdUzfaMWjFrC8MBUGA1UdEQQO\nMAyCCmt1YmVybmV0ZXMwDQYJKoZIhvcNAQELBQADggEBACXx5v38hO08bRliftzJ\nACRcqDhm7GesKrQXH9IrIuMv5p3Cngym225vDsrc5Et3tK8crDOE3k0phue5MnV8\nApSh2ErCz03+AzXhfifRs3sEzItPGJ88FTyIH9ikHKXoMwGFQFIuu3mMr9IowwGv\nZn11bM3b2ULiq4Of+1jNS5BaInGaBAU6iHLbnzapWfa23GJZzs+ACZJM9IU08ufq\nLFvxp6fL73ewb7c7N8vz2f6pmvFkZ61aH3jYeuuVInKSyHxt/geWbs6KYT5rkhzB\nmVL41zywe9atViz1BCOpZvKJlPgfYoZPSr13eXQ119M9l0xiSkqSnMkm2KpPMn76\nGLI=\n-----END CERTIFICATE-----"
+  kubernetes_ca_cert     = file("../../ssl/caKube.crt")
   token_reviewer_jwt     = file("../../ssl/kubernetes.key")
   issuer                 = "https://kubernetes.default.svc.cluster.local"
-  #disable_iss_validation = "true" //Kubernetes +v1.21 https://github.com/external-secrets/kubernetes-external-secrets/issues/721
+  # disable_iss_validation = "true" //Kubernetes +v1.21 https://github.com/external-secrets/kubernetes-external-secrets/issues/721
 }
 
 resource "vault_kubernetes_auth_backend_role" "kube-4as" {
   backend                          = vault_auth_backend.kubernetes.path
   role_name                        = "kube-4as"
-  bound_service_account_names      = ["default"]
+  bound_service_account_names      = ["default","issuer"]
   bound_service_account_namespaces = ["vault"]
   token_ttl                        = 3600
-  token_policies                   = ["default", "secret-kube-read"]
+  token_policies                   = ["default", "secret-kube-read","cert-manager"]
 }
