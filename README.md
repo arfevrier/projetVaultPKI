@@ -6,7 +6,7 @@
 
 Dans un système d’information l’utilisation de SSH est omniprésente pour administrer les nombreux serveurs présents dans une le système. Lorsque le nombre de serveurs et d’utilisateurs commence à augmenter, il devient extrêmement difficile de pouvoir connaître les rôles, besoins, et autorisation de chaque utilisateur sur chacun des systèmes. Originalement chaque serveur possède une liste des clés utilisateurs autorisés à accéder au terminal. Réaliser un audit global de l’ensemble du système d'information est fastidieux.
 
-De plus, les administrateurs systèmes peuvent être confrontés à de nombreux problèmes. Les utilisateurs perdent leur clé SSH, il faut les modifier sur l’ensemble des serveurs. Le roulement des clés SSH est lent. Chaque utilisateur ne doit pouvoir accéder qu'à certain groupe de serveur spécifiquement.
+De plus, les administrateurs systèmes peuvent être confrontés à de nombreux problèmes. Les utilisateurs perdent leur clé SSH, il faut les modifier sur l’ensemble des serveurs. Le roulement des clés SSH est lent. Chaque utilisateur ne doit pouvoir accéder qu'à certains groupes de serveur spécifiquement.
 
 Une solution est de mettre en place une autorité de certification donnant les autorisations aux utilisateurs qui en ont le droit.
 
